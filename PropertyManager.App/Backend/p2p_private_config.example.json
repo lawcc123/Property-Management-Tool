@@ -1,0 +1,7 @@
+{
+  "login_url": "https://login.example.invalid/Account/Login",
+  "api_base": "https://api.example.invalid/procuretopaynet/api/connect",
+  "database": "DEMO_DATABASE",
+  "origin": "https://api.example.invalid",
+  "referer": "https://api.example.invalid/procuretopaynet/content/"
+}

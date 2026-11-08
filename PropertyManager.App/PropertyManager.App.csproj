@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <DefaultItemExcludes>$(DefaultItemExcludes);**/bin/**;**/obj/**</DefaultItemExcludes>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <Version>1.0.0</Version>
+    <EnableDeveloperTools Condition="'$(EnableDeveloperTools)' == '' and '$(UsePackagedBackend)' != 'true'">true</EnableDeveloperTools>
+    <EnableDeveloperTools Condition="'$(EnableDeveloperTools)' == ''">false</EnableDeveloperTools>
+    <DefineConstants Condition="'$(EnableDeveloperTools)' == 'true'">$(DefineConstants);DEVELOPER_TOOLS</DefineConstants>
+    <OperationsBundleDir Condition="'$(OperationsBundleDir)' == ''">..\Runtime\Operations.Worker</OperationsBundleDir>
+    <BuildingLinkBundleDir Condition="'$(BuildingLinkBundleDir)' == ''">..\Runtime\BuildingLink.Worker</BuildingLinkBundleDir>
+    <WorkerBundleDir Condition="'$(WorkerBundleDir)' == ''">..\Runtime\RegistrySync.Worker</WorkerBundleDir>
+  </PropertyGroup>
+
+  <Target Name="ValidateDeveloperTools" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(EnableDeveloperTools)' != 'true' and '$(EnableDeveloperTools)' != 'false'" Text="EnableDeveloperTools must be true or false." />
+    <Error Condition="'$(UsePackagedBackend)' == 'true' and '$(EnableDeveloperTools)' != 'false'" Text="Packaged office builds must exclude developer tools." />
+  </Target>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
+    <Content Include="Assets\Licenses\*.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="ThirdPartyNotices.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Assets\EnvelopeDefaults\*.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Condition="'$(UsePackagedBackend)' != 'true'" Update="Backend\*.py" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Update="Backend\OperationsSchedule.ps1" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Condition="'$(UsePackagedBackend)' == 'true'" Include="$(OperationsBundleDir)\**\*" Link="Backend\Operations\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Update="Backend\BuildingLinkSchedule.ps1" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Update="Backend\p2p_private_config.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Condition="'$(UsePackagedBackend)' == 'true'" Include="$(BuildingLinkBundleDir)\**\*" Link="Backend\BuildingLink\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Condition="'$(UsePackagedBackend)' == 'true'" Include="$(WorkerBundleDir)\**\*" Link="Backend\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ExcelDataReader" Version="3.8.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
+  </ItemGroup>
+</Project>
+

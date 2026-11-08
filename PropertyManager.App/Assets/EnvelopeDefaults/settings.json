@@ -1,0 +1,13 @@
+{
+  "offices": [
+    {
+      "nickname": "Example Management Office",
+      "company": "DEMO 1001",
+      "address": "100 Example Street",
+      "city": "Example City",
+      "province": "ON",
+      "postal": "A1A 1A1",
+      "id": "30ae498b-dcaa-5711-a59f-986738a6e5f5"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+<UserControl x:Class="PropertyManager.App.BuildingLink.BuildingLinkView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Background="{DynamicResource ThemePage}">
+ <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel Margin="32,27,32,24">
+  <TextBlock Text="BuildingLink Data Download" FontSize="30" FontWeight="SemiBold"/>
+  <TextBlock Text="Download Occupant and Unit Data, or keep them updated on a schedule." Style="{StaticResource Caption}" Margin="0,7,0,20"/>
+  <Border Style="{StaticResource Card}" Padding="22" Margin="0,0,0,18"><StackPanel>
+   <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+    <StackPanel><TextBlock Text="Download progress" FontSize="17" FontWeight="SemiBold"/><TextBlock x:Name="StageText" Text="Ready when you are" TextWrapping="Wrap" Margin="0,8,12,0"/></StackPanel>
+    <StackPanel Grid.Column="1" Orientation="Horizontal"><Button x:Name="DownloadButton" Content="Download now" Click="Download_Click" Background="{DynamicResource ThemeAccent}" BorderBrush="{DynamicResource ThemeAccent}" Foreground="{DynamicResource ThemeAccentForeground}" Margin="0,0,8,0"/><Button x:Name="CancelButton" Content="Cancel" Click="Cancel_Click" IsEnabled="False"/></StackPanel>
+   </Grid>
+   <ProgressBar x:Name="DownloadProgress" Height="6" Margin="0,18,0,8" Background="#E2E9ED" Maximum="100"/>
+   <TextBlock x:Name="ProgressText" Text="Downloads run through a hidden browser. Older backups are retained." Style="{StaticResource Caption}" TextWrapping="Wrap"/>
+   <TextBlock x:Name="LastRunText" Text="No completed download yet." Style="{StaticResource Caption}" Margin="0,8,0,0" TextWrapping="Wrap"/>
+   <TextBlock x:Name="LastSuccessText" Text="No successful download recorded." Style="{StaticResource Caption}" Margin="0,5,0,0"/>
+   <Expander Header="Saved reports and details" Margin="0,12,0,0"><TextBox x:Name="ResultText" IsReadOnly="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent" Padding="0,10" MaxHeight="180" VerticalScrollBarVisibility="Auto"/></Expander>
+  </StackPanel></Border>
+  <StackPanel x:Name="SetupPanel">
+   <Border Style="{StaticResource Card}" Padding="22" Margin="0,0,0,18"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+    <StackPanel><TextBlock Text="BuildingLink sign-in" FontSize="17" FontWeight="SemiBold"/><TextBlock x:Name="CredentialText" Text="No saved login" Margin="0,8,12,0" TextWrapping="Wrap" Style="{StaticResource Caption}"/><TextBlock Text="Saved securely for this Windows account. Verification, if required, needs your attention." Style="{StaticResource Caption}" Margin="0,6,12,0" TextWrapping="Wrap"/></StackPanel>
+    <Button Grid.Column="1" Content="Manage credentials" Click="Credentials_Click" VerticalAlignment="Center"/>
+   </Grid></Border>
+   <Border Style="{StaticResource Card}" Padding="22" Margin="0,0,0,18"><StackPanel>
+    <DockPanel><Button Content="Manage folders" Click="ManageFolders_Click" DockPanel.Dock="Right" HorizontalAlignment="Right" Padding="12,7"/><TextBlock Text="Corporations and destination folders" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center"/></DockPanel>
+    <TextBlock Text="This downloader supports DEMO 1001 and DEMO 2002 only. Use Manage folders to set separate Occupant Data and Unit Data folders for each corporation you want to download. These paths are shared with email lists, owner mailing lists and Outlook Contact Sync." Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,8,0,16"/>
+    <ItemsControl x:Name="CorporationItems"><ItemsControl.ItemTemplate><DataTemplate>
+     <Border BorderBrush="#DCE5E9" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,12"><StackPanel>
+      <CheckBox Content="{Binding Corporation}" IsChecked="{Binding Enabled,Mode=TwoWay}" FontWeight="SemiBold" FontSize="15" Foreground="{Binding ButtonColor}" Margin="0,0,0,12"/>
+      <Grid IsEnabled="{Binding Enabled}"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+       <TextBlock Text="Occupant Data folder" Style="{StaticResource Caption}" Margin="0,0,0,6"/>
+       <TextBox Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding OccupantFolder,Mode=OneWay}" IsReadOnly="True" Padding="8"/><Button Grid.Row="1" Grid.Column="2" Content="Open" Click="OpenOccupant_Click" Padding="12,8" Margin="8,0,0,0"/>
+       <TextBlock Grid.Row="2" Text="Unit Data folder" Style="{StaticResource Caption}" Margin="0,12,0,6"/>
+       <TextBox Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding UnitFolder,Mode=OneWay}" IsReadOnly="True" Padding="8"/><Button Grid.Row="3" Grid.Column="2" Content="Open" Click="OpenUnit_Click" Padding="12,8" Margin="8,0,0,0"/>
+      </Grid>
+     </StackPanel></Border>
+    </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    <Button Content="Save download selection" Click="SaveFolders_Click" Padding="14,9" HorizontalAlignment="Left"/>
+    <TextBlock x:Name="FolderStatus" Style="{StaticResource Caption}" Margin="0,10,0,0" TextWrapping="Wrap"/>
+   </StackPanel></Border>
+   <Border Style="{StaticResource Card}" Padding="22"><StackPanel>
+    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Automatic updates" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center"/><Button Grid.Column="1" Content="Refresh status" Click="RefreshSchedule_Click" Padding="12,7"/></Grid>
+    <TextBlock x:Name="ScheduleStatus" Text="Checking Windows schedule…" Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,10,0,10"/>
+    <TextBlock Text="The app can be closed. Keep this Windows account signed in; the screen may be locked. Use UNC paths for network folders." Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,0,0,14"/>
+    <StackPanel Orientation="Horizontal"><TextBlock Text="Download time (24-hour)" VerticalAlignment="Center" Margin="0,0,12,0"/><TextBox x:Name="ScheduleTime" Width="82" Text="06:00" Padding="8"/></StackPanel>
+    <WrapPanel x:Name="DaysPanel" Margin="0,14,0,18"/>
+    <WrapPanel><Button x:Name="EnableScheduleButton" Content="Enable / update schedule" Click="EnableSchedule_Click" Background="{DynamicResource ThemeAccent}" BorderBrush="{DynamicResource ThemeAccent}" Foreground="{DynamicResource ThemeAccentForeground}" Padding="14,9" Margin="0,0,8,0"/><Button x:Name="DisableScheduleButton" Content="Disable schedule" Click="DisableSchedule_Click" Padding="14,9"/></WrapPanel>
+   </StackPanel></Border>
+  </StackPanel>
+ </StackPanel></ScrollViewer>
+</UserControl>

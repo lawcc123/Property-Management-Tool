@@ -1,0 +1,18 @@
+[
+  {
+    "company": "Example Service Company 1",
+    "address": "100 Sample Avenue",
+    "city": "Example City",
+    "province": "ON",
+    "postal": "A1A 1A1",
+    "id": "00000000-0000-4000-8000-000000000001"
+  },
+  {
+    "company": "Example Service Company 2",
+    "address": "200 Sample Avenue",
+    "city": "Example City",
+    "province": "ON",
+    "postal": "A1A 1A1",
+    "id": "00000000-0000-4000-8000-000000000002"
+  }
+]

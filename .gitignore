@@ -21,3 +21,7 @@ release/
 **/auth_state.json
 **/browser_session/
 **/p2p_private_config.json
+# Local owner/export metadata, not reader-facing documentation
+/.public-export.json
+/PUBLIC-EXPORT-REPORT.json
+/PUBLIC-REVIEW.md

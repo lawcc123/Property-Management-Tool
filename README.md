@@ -1,58 +1,75 @@
-# Property Manager Demo
+# Property Management Tool
 
-A sanitized Windows desktop source-code showcase for property-management workflows.
-It includes registry synchronization logic, recipient lists, owner mailing lists,
-data downloads, address layouts, Outlook contact planning, reminders, personalized
-email workflows, protected local storage and recovery logic.
+A Windows desktop application that brings recurring property-management work into one workspace: invoice tracking, resident communication, contact maintenance, operational reminders and mailing preparation.
 
-## Public showcase scope
+The application combines a **C# / WPF interface**, **Python automation workers** and **SQLite-backed records**. Its workflows emphasize previews, explicit approvals, recoverable changes and clear progress reporting.
 
-All example corporation names, building identities and mailing addresses are fictional.
-No production configuration, credentials, sessions, resident workbooks, real contractor
-address book, histories, backups, internal test fixtures, screenshots or installers are included.
-Only selected synthetic/offline tests are included. Internal release tooling and old Git
-history are excluded. This folder has its own public-export tracking manifest.
+> **Public showcase:** This edition uses fictional organization details and synthetic examples. Live service connections, email submission, Outlook access, scheduled tasks and direct printing are disabled. You can explore the interface and inspect the implementation without connecting office accounts.
 
-Live service runners, Outlook connections, schedule execution and direct printing are
-intentionally blocked in this copy. Python CLI workers are blocked as well. Offline UI,
-sample recipients, data-editing logic and document/layout source can be inspected.
-This is a source showcase, not a configurable production replacement. Adapting it for
-real buildings requires a separate engineering review; changing the example labels alone
-does not configure an integration.
+## Workflows
 
-## Build on Windows
+The source contains implementations for the following areas. Connected operations remain blocked in this public edition.
 
-Install the .NET 10 SDK, then double-click **Open Public Demo.cmd** in this folder.
-It builds and opens the full desktop app, including every workspace in the sidebar.
-The first selected workspace is Registry Sync; this is not a separate registry-only app.
-Build files are kept in a separate local app-data build folder, outside this repository.
+| Workspace | What it supports |
+| --- | --- |
+| **Registry Sync** | Match registry entries with invoice/PO records; refresh workflow and payment information; preserve workbook layout; back up before saving; explain rows needing review. |
+| **Generate Email List** | Filter occupants by resident/owner groups, units and floor/block; review addresses; control duplicate handling; export lists or pass recipients into a campaign. |
+| **Owner Mailing List** | Combine occupant and unit records, prefer alternate mailing addresses and use property-address fallbacks; group owners by unit and export mailing lists. |
+| **BuildingLink Data** | Manage shared corporation data folders and download workflows for occupant/unit data, with progress reporting and scheduling code. |
+| **Contractor Address Printing** | Manage addresses and return-address logos; preview envelope/label layouts; choose label positions; generate envelope Word documents and track requests. |
+| **Outlook Contact Sync** | Plan individual-contact and group updates, use a saved Contacts destination, review approvals and retain recovery history. |
+| **Reservations & Reminders** | Prepare operational reminders from amenity bookings, repair cases and bulk-item requests, with previews and run history. |
+| **Personalized Email** | Build a recipient snapshot, merge fields into messages and multiple Word/PDF attachments, manage HTML signatures, preview/test messages and track delivery outcomes. |
 
-Alternatively, use these commands:
+## Interface preview
 
-```powershell
-dotnet build PropertyManager.App/PropertyManager.App.csproj -c Release
-dotnet run --project PropertyManager.App/PropertyManager.App.csproj -c Release
-```
+### Review recipients before preparing a campaign
 
-The demo uses its own app-data and credential namespaces. Do not copy real app data into it.
-For optional offline Python tests, install Python and the Backend requirements, then run:
+The recipient snapshot keeps unit associations visible and separates email-ready recipients from print-only records. The example below contains synthetic data.
 
-```powershell
-python -m pip install -r PropertyManager.App/Backend/requirements.txt
-python -m unittest discover -s tests -q
-```
+![Personalized Email recipient snapshot with fictional units and example addresses](docs/images/recipients.png)
 
-Desktop Word is required for local Word/PDF generation. No credentials are needed to
-inspect or build the source. No installer is provided in this export.
+### Inspect each personalized message
 
-## Updating this folder
+The review step lets users move between recipient-specific messages before submission. Test delivery and live delivery are separate steps; both are blocked in this showcase.
 
-Updates are performed manually, only on the owner's explicit request, by a private
-export helper outside this folder. Generated files are tracked by hash. Updates preserve
-`.git` and unrelated user files, stop on edited generated files, and remove only obsolete
-files previously generated by that helper. Nothing commits or pushes automatically.
+![Personalized Email review showing a synthetic recipient-specific message](docs/images/message-review.png)
+
+## Engineering highlights
+
+- **Desktop orchestration:** WPF views coordinate background work through asynchronous services and Python workers. Structured JSON-line events carry progress, results and cancellation information back to the interface.
+- **Reviewable automation:** Recipient previews, contact-change plans and request histories expose the proposed work before consequential actions.
+- **Delivery-state tracking:** Campaign records distinguish accepted, failed and uncertain submissions so an ambiguous outcome is not automatically treated as safe to resend.
+- **Recovery-aware storage:** SQLite stores, Windows-protected payloads, operation locks and verified app-data backups support recovery without replacing newer delivery records silently.
+- **Workbook preservation:** Registry updates detect columns by header, retain spacing and formatting, and verify backups before replacing a workbook.
+- **Bounded service access:** Request pacing, run-scoped caching and stop-on-block behavior are implemented in the registry transport.
+
+See [Architecture](docs/ARCHITECTURE.md) for the component boundaries and [Testing](docs/TESTING.md) for the public validation scope.
+
+## Technology
+
+| Layer | Technologies |
+| --- | --- |
+| Desktop UI | C#, .NET 10, WPF/XAML |
+| Automation workers | Python, Playwright, openpyxl |
+| Local storage | SQLite, JSON compatibility files, Windows DPAPI and Credential Manager |
+| Integration code | Yardi P2P, BuildingLink, Classic Outlook Object Model, SMTP with STARTTLS, desktop Microsoft Word |
+| Mailing | Word document generation and Windows printer/driver interfaces |
+
+## Run the public demo
+
+On Windows with the **.NET 10 SDK** installed, double-click **[Open Public Demo.cmd](Open%20Public%20Demo.cmd)**. It builds and opens the full application. Registry Sync is the initial workspace; all workspaces are available in the sidebar.
+
+For a populated example, open **Personalized Email**, create a draft and choose **Try sample data** on the Recipients step. No credentials are required.
+
+Build files are kept outside this repository by the launcher. Python is needed only for the optional worker tests; desktop Word is needed for local Word/PDF generation.
+
+See [Getting started](docs/GETTING_STARTED.md) for build commands and demo capabilities.
+
+## Validation
+
+The public snapshot has been built on Windows and checked with **31 offline Python tests**. Its eight live-operation entry points have also been checked to reject execution before connecting or submitting work. These checks use synthetic records and fake transports; they are not a live-service, physical-printer or clean-machine compatibility certification.
 
 ## Third-party notices
 
-Existing third-party copyright and license notices are retained in the application
-source and Assets/Licenses. No project-wide license has been selected or added here.
+Third-party notices are retained in [ThirdPartyNotices.txt](PropertyManager.App/ThirdPartyNotices.txt) and [Assets/Licenses](PropertyManager.App/Assets/Licenses). This repository does not currently declare a project-wide license.
